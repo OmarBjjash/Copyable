@@ -33,7 +33,7 @@ Since this extension is not currently in the Chrome Web Store, you can install i
 
 ```text
  copyable
-├──  icons
+├──  icons/
 ├──  bridge.js
 ├──  content.js
 ├──  extension_popup_ui.html
