@@ -1,23 +1,24 @@
 # Copyable: Ultimate Text Selection & Right-Click Enabler
 
-A lightweight, aggressive Manifest V3 browser extension that forcefully re-enables text selection, copying, and right-click context menus on heavily restricted websites. 
+A lightweight, aggressive Manifest V3 browser extension that forcefully re-enables text selection, copying, and right-click context menus on heavily restricted websites.
 
 Unlike basic CSS-override extensions, **Copyable** is designed to defeat modern anti-copying techniques, including Shadow DOM encapsulation (Web Components), dynamic JavaScript event blocking, and continuous selection clearing.
 
 ## ✨ Features
 
-* **Shadow DOM Piercing:** Recursively traverses closed-off Web Components to inject selection-enabling CSS directly into isolated DOM trees (ideal for modern e-learning and assessment platforms).
-* **JS Event Neutralization:** Intercepts and blocks anti-selection JavaScript events (`selectstart`, `copy`, `mousedown`, `contextmenu`) during the capture phase.
-* **`preventDefault` Override:** Executes in the `MAIN` page world to override `Event.prototype.preventDefault`, forcing the browser to ignore website scripts that try to cancel mouse clicks and native menus.
-* **Selection Persistence:** Patches the `window.Selection` prototype to neutralize scripts that continuously call `removeAllRanges()` or `empty()` when you try to drag your mouse.
-* **IFrame Support:** Executes across all nested frames (`"all_frames": true`).
-* **Manifest V3:** Built using the latest modern Chrome extension standards.
+- **Shadow DOM Piercing:** Recursively traverses closed-off Web Components to inject selection-enabling CSS directly into isolated DOM trees (ideal for modern e-learning and assessment platforms).
+- **JS Event Neutralization:** Intercepts and blocks anti-selection JavaScript events (`selectstart`, `copy`, `mousedown`, `contextmenu`) during the capture phase.
+- **`preventDefault` Override:** Executes in the `MAIN` page world to override `Event.prototype.preventDefault`, forcing the browser to ignore website scripts that try to cancel mouse clicks and native menus.
+- **Selection Persistence:** Patches the `window.Selection` prototype to neutralize scripts that continuously call `removeAllRanges()` or `empty()` when you try to drag your mouse.
+- **IFrame Support:** Executes across all nested frames (`"all_frames": true`).
+- **Manifest V3:** Built using the latest modern Chrome extension standards.
 
 ## 🚀 Installation (Developer Mode)
 
 Since this extension is not currently in the Chrome Web Store, you can install it locally:
 
 1. Clone this repository or download the ZIP file and extract it.
+
    ```bash
    git clone https://github.com/OmarBjjash/Copyable.git
    ```
@@ -36,7 +37,6 @@ Since this extension is not currently in the Chrome Web Store, you can install i
 ├──  icons/
 ├──  bridge.js
 ├──  content.js
-├──  extension_popup_ui.html
 ├──  LICENSE
 ├──  manifest.json
 ├──  popup.css
