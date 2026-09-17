@@ -1,4 +1,12 @@
-// 1. The CSS rules to inject
+// content.js
+let isEnabled = false;
+
+const originalPreventDefault = Event.prototype.preventDefault;
+const originalRemoveAllRanges = window.Selection
+  ? Selection.prototype.removeAllRanges
+  : null;
+const originalEmpty = window.Selection ? Selection.prototype.empty : null;
+
 const cssText = `
   *, *::before, *::after,
   table, caption, tbody, thead, tfoot, tr, th, td,
@@ -15,97 +23,152 @@ const cssText = `
   }
 `;
 
-// 2. Inject CSS into a specific root (either the main document or a shadow root)
-const injectCSSIntoRoot = (root) => {
-  const styleId = "force-select-shadow-css";
-  // Check if we already injected into this specific root
-  if (root.querySelector(`#${styleId}`)) return;
+const STYLE_ID = "force-select-shadow-css";
 
-  const style = document.createElement("style");
-  style.id = styleId;
-  style.textContent = cssText;
+const protectedEvents = [
+  "contextmenu",
+  "selectstart",
+  "copy",
+  "cut",
+  "mousedown",
+  "mouseup",
+  "mousemove",
+  "dragstart",
+];
 
-  if (root.nodeType === Node.DOCUMENT_NODE) {
-    (root.head || root.documentElement).appendChild(style);
-  } else {
-    root.appendChild(style); // Append directly into the Shadow DOM
+const blockingEvents = [
+  "contextmenu",
+  "selectstart",
+  "copy",
+  "cut",
+  "dragstart",
+  "selectionchange",
+];
+
+const stopPropagationHandler = (e) => {
+  if (isEnabled) {
+    e.stopPropagation();
   }
 };
 
-// 3. Recursively find all Shadow DOMs and inject the CSS
+const injectCSSIntoRoot = (root) => {
+  if (!isEnabled) return;
+  if (root.querySelector(`#${STYLE_ID}`)) return;
+
+  const style = document.createElement("style");
+  style.id = STYLE_ID;
+  style.textContent = cssText;
+
+  if (root.nodeType === Node.DOCUMENT_NODE) {
+    (root.head || root.documentElement)?.appendChild(style);
+  } else {
+    root.appendChild(style);
+  }
+};
+
 const pierceShadowDOM = (root) => {
+  if (!isEnabled) return;
   injectCSSIntoRoot(root);
 
-  // Find all elements within the current root
   const elements = root.querySelectorAll("*");
   elements.forEach((el) => {
-    // If the element has a Shadow DOM attached, dive inside it
     if (el.shadowRoot) {
       pierceShadowDOM(el.shadowRoot);
     }
   });
 };
 
-// 4. Override event cancellations (Stops JS blocks before they reach the Shadow DOM)
-const unblockPreventDefault = () => {
-  const originalPreventDefault = Event.prototype.preventDefault;
-  const protectedEvents = [
-    "contextmenu",
-    "selectstart",
-    "copy",
-    "cut",
-    "mousedown",
-    "mouseup",
-    "mousemove",
-    "dragstart",
-  ];
-
-  Event.prototype.preventDefault = function () {
-    if (protectedEvents.includes(this.type)) return;
-    return originalPreventDefault.apply(this, arguments);
-  };
-};
-
-const stopBlockingListeners = () => {
-  const events = [
-    "contextmenu",
-    "selectstart",
-    "copy",
-    "cut",
-    "dragstart",
-    "selectionchange",
-  ];
-  events.forEach((type) => {
-    window.addEventListener(type, (e) => e.stopPropagation(), true);
+const removeCSSFromRoot = (root) => {
+  const style = root.querySelector(`#${STYLE_ID}`);
+  if (style) {
+    style.remove();
+  }
+  const elements = root.querySelectorAll("*");
+  elements.forEach((el) => {
+    if (el.shadowRoot) {
+      removeCSSFromRoot(el.shadowRoot);
+    }
   });
 };
 
-// 5. Neutralize selection clearing
-const neutralizeSelectionClearing = () => {
-  if (window.Selection) {
-    Selection.prototype.removeAllRanges = function () {};
-    Selection.prototype.empty = function () {};
-  }
-};
-
-// Execute
-neutralizeSelectionClearing();
-try {
-  unblockPreventDefault();
-} catch (e) {}
-stopBlockingListeners();
-
-// Run the Shadow DOM piercer on load
-pierceShadowDOM(document);
-
-// Observe the page for new Web Components being added dynamically
 const observer = new MutationObserver(() => {
-  pierceShadowDOM(document);
+  if (isEnabled) {
+    pierceShadowDOM(document);
+  }
 });
 
-if (document.documentElement) {
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-  });
+function applyOverrides() {
+  Event.prototype.preventDefault = function () {
+    if (isEnabled && protectedEvents.includes(this.type)) {
+      return;
+    }
+    return originalPreventDefault.apply(this, arguments);
+  };
+
+  if (window.Selection) {
+    Selection.prototype.removeAllRanges = function () {
+      if (isEnabled) return;
+      if (originalRemoveAllRanges) {
+        return originalRemoveAllRanges.apply(this, arguments);
+      }
+    };
+    Selection.prototype.empty = function () {
+      if (isEnabled) return;
+      if (originalEmpty) {
+        return originalEmpty.apply(this, arguments);
+      }
+    };
+  }
 }
+
+function enable() {
+  if (isEnabled) return;
+  isEnabled = true;
+
+  pierceShadowDOM(document);
+
+  blockingEvents.forEach((type) => {
+    window.addEventListener(type, stopPropagationHandler, true);
+  });
+
+  if (document.documentElement) {
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  }
+}
+
+function disable() {
+  if (!isEnabled) return;
+  isEnabled = false;
+
+  removeCSSFromRoot(document);
+
+  blockingEvents.forEach((type) => {
+    window.removeEventListener(type, stopPropagationHandler, true);
+  });
+
+  observer.disconnect();
+
+  Event.prototype.preventDefault = originalPreventDefault;
+  if (window.Selection) {
+    if (originalRemoveAllRanges)
+      Selection.prototype.removeAllRanges = originalRemoveAllRanges;
+    if (originalEmpty) Selection.prototype.empty = originalEmpty;
+  }
+}
+
+applyOverrides();
+
+window.addEventListener("COPYABLE_STATE_CHANGE", (e) => {
+  const shouldEnable = e.detail && e.detail.enabled;
+  if (shouldEnable) {
+    applyOverrides();
+    enable();
+  } else {
+    disable();
+  }
+});
+
+window.dispatchEvent(new CustomEvent("COPYABLE_REQUEST_STATE"));

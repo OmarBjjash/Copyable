@@ -1,0 +1,257 @@
+/* STREAMING_CHUNK:Configuring CSS variables and theme palette... */
+:root {
+--bg-color: #0f172a;
+--card-bg: #1e293b;
+--card-border: #334155;
+--text-main: #f8fafc;
+--text-muted: #94a3b8;
+--primary: #3b82f6;
+--success: #10b981;
+--success-bg: rgba(16, 185, 129, 0.15);
+--disabled: #64748b;
+--disabled-bg: rgba(100, 116, 139, 0.2);
+--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+/* STREAMING_CHUNK:Setting global box sizing and base layout styles... */
+
+{
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+width: 320px;
+background-color: var(--bg-color);
+color: var(--text-main);
+user-select: none;
+}
+
+.container {
+display: flex;
+flex-direction: column;
+padding: 16px;
+gap: 14px;
+}
+
+/* STREAMING_CHUNK:Styling header component and logo... */
+.header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding-bottom: 8px;
+border-bottom: 1px solid var(--card-border);
+}
+
+.brand {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.logo {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 34px;
+height: 34px;
+background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+color: #ffffff;
+border-radius: 9px;
+box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.title-group {
+display: flex;
+align-items: baseline;
+gap: 6px;
+}
+
+.title-group h1 {
+font-size: 17px;
+font-weight: 700;
+letter-spacing: -0.3px;
+}
+
+.version {
+font-size: 11px;
+font-weight: 600;
+color: var(--text-muted);
+background-color: var(--card-bg);
+padding: 2px 6px;
+border-radius: 4px;
+border: 1px solid var(--card-border);
+}
+
+/* STREAMING_CHUNK:Styling main content cards... */
+.content {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.card {
+background-color: var(--card-bg);
+border: 1px solid var(--card-border);
+border-radius: 12px;
+padding: 14px;
+box-shadow: var(--shadow-sm);
+}
+
+.toggle-card {
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.toggle-info {
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+.toggle-title {
+font-size: 14px;
+font-weight: 600;
+}
+
+.toggle-subtitle {
+font-size: 11px;
+color: var(--text-muted);
+}
+
+/* STREAMING_CHUNK:Designing custom animated toggle switch... */
+.switch {
+position: relative;
+display: inline-block;
+width: 46px;
+height: 25px;
+flex-shrink: 0;
+}
+
+.switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #334155;
+transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+border-radius: 25px;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 19px;
+width: 19px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+border-radius: 50%;
+box-shadow: var(--shadow-md);
+}
+
+input:checked + .slider {
+background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+transform: translateX(21px);
+}
+
+/* STREAMING_CHUNK:Styling current site status section... */
+.status-card {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.status-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.status-label {
+font-size: 11px;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+color: var(--text-muted);
+}
+
+.badge {
+font-size: 11px;
+font-weight: 700;
+padding: 3px 8px;
+border-radius: 12px;
+}
+
+.badge-active {
+background-color: var(--success-bg);
+color: var(--success);
+border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-disabled {
+background-color: var(--disabled-bg);
+color: var(--disabled);
+border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.domain-text {
+font-size: 13px;
+font-weight: 600;
+color: var(--text-main);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.status-description {
+font-size: 12px;
+color: var(--text-muted);
+line-height: 1.4;
+}
+
+/* STREAMING_CHUNK:Styling feature list checklist items... */
+.features-list {
+display: flex;
+flex-direction: column;
+gap: 8px;
+padding: 4px 2px;
+}
+
+.feature-item {
+display: flex;
+align-items: center;
+gap: 8px;
+font-size: 12px;
+color: var(--text-muted);
+}
+
+.check-icon {
+color: var(--success);
+flex-shrink: 0;
+}
+
+/* STREAMING_CHUNK:Styling footer text... */
+.footer {
+text-align: center;
+padding-top: 8px;
+border-top: 1px solid var(--card-border);
+font-size: 11px;
+color: var(--text-muted);
+}
