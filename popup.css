@@ -51,18 +51,30 @@ display: flex;
 align-items: center;
 gap: 10px;
 }
-
 .logo {
-display: flex;
-align-items: center;
-justify-content: center;
-width: 34px;
-height: 34px;
-background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-color: #ffffff;
-border-radius: 9px;
-box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* remove any color: ... if it was only there for the SVG stroke */
 }
+
+.logo img {
+  display: block;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+/* .logo { */
+/* display: flex; */
+/* align-items: center; */
+/* justify-content: center; */
+/* width: 34px; */
+/* height: 34px; */
+/* background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); */
+/* color: #ffffff; */
+/* border-radius: 9px; */
+/* box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4); */
+/* } */
 
 .title-group {
 display: flex;
