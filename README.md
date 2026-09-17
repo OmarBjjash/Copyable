@@ -32,15 +32,17 @@ Since this extension is not currently in the Chrome Web Store, you can install i
 ## 📁 File Structure
 
 ```text
-copyable/
-├── icons/
-│   ├── icon16.png
-│   ├── icon32.png
-│   ├── icon48.png
-│   └── icon128.png
-├── content.js       # Core logic: DOM traversal, CSS injection, and JS patching
-├── manifest.json    # Manifest V3 configuration and permissions
-└── README.md        # Project documentation
+ copyable
+├──  icons
+├──  bridge.js
+├──  content.js
+├──  extension_popup_ui.html
+├──  LICENSE
+├──  manifest.json
+├──  popup.css
+├──  popup.html
+├──  popup.js
+└──  README.md
 
 ```
 
